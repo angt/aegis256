@@ -1,2 +1,3 @@
-# aegis256
-AEGIS-256
+# AEGIS-256
+
+** WIP! DO NOT USE IT! **
