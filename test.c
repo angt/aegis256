@@ -1,16 +1,16 @@
+#include <stdio.h>
 #include "aegis256.c"
-#include "stdio.h"
 
 #define COUNT(x) (sizeof(x) / sizeof(x[0]))
 
 struct {
-    unsigned char *key;
-    unsigned char *npub;
-    unsigned char *m;
-    unsigned int mlen;
-    unsigned char *ad;
-    unsigned int adlen;
-    unsigned char *c;
+    char *key;
+    char *npub;
+    char *m;
+    unsigned long long mlen;
+    char *ad;
+    unsigned long long adlen;
+    char *c;
 } t[] = {
     {
         .key = "\x0f\xc9\x8e\x67\x44\x9e\xaa\x86"
@@ -532,12 +532,10 @@ main(int argc, char **argv)
         unsigned long long clen = 0;
 
         int r = aegis256_encrypt(c, &clen,
-                                 t[i].m,
-                                 t[i].mlen,
-                                 t[i].ad,
-                                 t[i].adlen,
-                                 t[i].npub,
-                                 t[i].key);
+                                 (unsigned char *)t[i].m, t[i].mlen,
+                                 (unsigned char *)t[i].ad, t[i].adlen,
+                                 (unsigned char *)t[i].npub,
+                                 (unsigned char *)t[i].key);
 
         if (r || clen != t[i].mlen + 16 || memcmp(t[i].c, c, clen)) {
             printf("%3i: FAILED\n", i);
@@ -554,12 +552,10 @@ main(int argc, char **argv)
         unsigned long long mlen = sizeof(m);
 
         int r = aegis256_decrypt(m, &mlen,
-                                 t[i].c,
-                                 t[i].mlen + 16,
-                                 t[i].ad,
-                                 t[i].adlen,
-                                 t[i].npub,
-                                 t[i].key);
+                                 (unsigned char *)t[i].c, t[i].mlen + 16,
+                                 (unsigned char *)t[i].ad, t[i].adlen,
+                                 (unsigned char *)t[i].npub,
+                                 (unsigned char *)t[i].key);
 
         if (r || mlen != t[i].mlen || memcmp(t[i].m, m, mlen)) {
             printf("%3i: FAILED\n", i);
