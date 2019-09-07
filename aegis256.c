@@ -93,7 +93,7 @@ aegis256_dec(unsigned char *const restrict dst,
 }
 
 int
-aegis256_encrypt(unsigned char *c, unsigned long long *clen,
+aegis256_encrypt(unsigned char *c, unsigned long long *len,
                  const unsigned char *m, unsigned long long mlen,
                  const unsigned char *ad, unsigned long long adlen,
                  const unsigned char *npub,
@@ -126,13 +126,15 @@ aegis256_encrypt(unsigned char *c, unsigned long long *clen,
     }
 
     aegis256_tag(c + mlen, mlen, adlen, state);
-    *clen = mlen + 16;
+
+    if (len)
+        *len = mlen + 16;
 
     return 0;
 }
 
 int
-aegis256_decrypt(unsigned char *m, unsigned long long *pmlen,
+aegis256_decrypt(unsigned char *m, unsigned long long *len,
                  const unsigned char *c, unsigned long long clen,
                  const unsigned char *ad, unsigned long long adlen,
                  const unsigned char *npub,
@@ -149,7 +151,9 @@ aegis256_decrypt(unsigned char *m, unsigned long long *pmlen,
         return -1;
 
     unsigned long long mlen = clen - 16;
-    *pmlen = mlen;
+
+    if (len)
+        *len = mlen;
 
     aegis256_init(k, npub, state);
 
