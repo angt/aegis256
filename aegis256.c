@@ -47,7 +47,7 @@ aegis256_tag(unsigned char *mac,
              unsigned long long adlen,
              __m128i *const restrict state)
 {
-    __m128i tmp = _mm_set_epi64x(mlen << 3, adlen << 3); // XXX BE/LE ?
+    __m128i tmp = _mm_set_epi64x(mlen << 3, adlen << 3);
     tmp = _mm_xor_si128(tmp, state[3]);
 
     for (int i = 0; i < 7; i++)
