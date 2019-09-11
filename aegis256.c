@@ -7,8 +7,11 @@
 #include <string.h>
 #include "x86intrin.h"
 
-#pragma GCC target("ssse3", "aes")
-#pragma GCC optimize("O3")
+#ifdef __clang__
+#pragma clang attribute push (__attribute__((target("ssse3,aes"))),apply_to=function)
+#else
+#pragma GCC target("ssse3,aes")
+#endif
 
 static inline void
 aegis256_update(__m128i *const restrict state,
@@ -196,7 +199,11 @@ aegis256_decrypt(unsigned char *m, unsigned long long *len,
     return 1 - (1 & ((ret - 1) >> 8));
 }
 
+#ifdef __clang__
+#pragma clang attribute pop
+#else
 #pragma GCC reset_options
+#endif
 
 #else
 
