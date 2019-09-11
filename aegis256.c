@@ -8,9 +8,9 @@
 #include "x86intrin.h"
 
 #ifdef __clang__
-#pragma clang attribute push (__attribute__((target("ssse3,aes"))),apply_to=function)
+#pragma clang attribute push (__attribute__((target("sse2,aes"))),apply_to=function)
 #else
-#pragma GCC target("ssse3,aes")
+#pragma GCC target("sse2,aes")
 #endif
 
 static inline void
@@ -105,7 +105,7 @@ aegis256_dec(unsigned char *const restrict dst,
 int
 aegis256_is_available(void)
 {
-    return __builtin_cpu_supports("ssse3")
+    return __builtin_cpu_supports("sse2")
         && __builtin_cpu_supports("aes");
 }
 
