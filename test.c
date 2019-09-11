@@ -525,6 +525,11 @@ main(int argc, char **argv)
 {
     int ret = 0;
 
+    if (!aegis256_is_available()) {
+        printf("not available");
+        return 1;
+    }
+
     printf("encrypt:\n");
 
     for (int i = 0; i < COUNT(t); i++) {

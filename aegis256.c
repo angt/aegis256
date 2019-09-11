@@ -103,6 +103,13 @@ aegis256_dec(unsigned char *const restrict dst,
 }
 
 int
+aegis256_is_available(void)
+{
+    return __builtin_cpu_supports("ssse3")
+        && __builtin_cpu_supports("aes");
+}
+
+int
 aegis256_encrypt(unsigned char *c, unsigned long long *len,
                  const unsigned char *m, unsigned long long mlen,
                  const unsigned char *ad, unsigned long long adlen,
@@ -206,6 +213,12 @@ aegis256_decrypt(unsigned char *m, unsigned long long *len,
 #endif
 
 #else
+
+int
+aegis256_is_available(void)
+{
+    return 0;
+}
 
 int
 aegis256_encrypt(unsigned char *c, unsigned long long *len,
