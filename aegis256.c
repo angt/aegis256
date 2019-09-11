@@ -6,6 +6,7 @@
 
 #include <string.h>
 #include "x86intrin.h"
+#include "cpuid.h"
 
 #ifdef __clang__
 #pragma clang attribute push (__attribute__((target("sse2,aes"))),apply_to=function)
@@ -105,8 +106,9 @@ aegis256_dec(unsigned char *const restrict dst,
 int
 aegis256_is_available(void)
 {
-    return __builtin_cpu_supports("sse2")
-        && __builtin_cpu_supports("aes");
+    unsigned eax, ebx, ecx, edx;
+    __cpuid(1, eax, ebx, ecx, edx);
+    return (ecx & bit_AES) && (edx & bit_SSE2);
 }
 
 int
