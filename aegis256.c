@@ -1,7 +1,14 @@
 // Adapted from https://bench.cr.yp.to/supercop/supercop-20190816.tar.xz
 
-#include <immintrin.h>
+#include "errno.h"
+
+#if __has_include("x86intrin.h")
+
 #include <string.h>
+#include "x86intrin.h"
+
+#pragma GCC target("ssse3", "aes")
+#pragma GCC optimize("O3")
 
 static inline void
 aegis256_update(__m128i *const restrict state,
@@ -147,8 +154,10 @@ aegis256_decrypt(unsigned char *m, unsigned long long *len,
     unsigned int ret = 0;
     __m128i state[6];
 
-    if (clen < 16)
+    if (clen < 16) {
+        errno = EINVAL;
         return -1;
+    }
 
     unsigned long long mlen = clen - 16;
 
@@ -184,5 +193,33 @@ aegis256_decrypt(unsigned char *m, unsigned long long *len,
     for (i = 0; i < 16; i++)
         ret |= (tag[i] ^ c[i + mlen]);
 
-    return -!(1 & ((ret - 1) >> 8));
+    return 1 - (1 & ((ret - 1) >> 8));
 }
+
+#pragma GCC reset_options
+
+#else
+
+int
+aegis256_encrypt(unsigned char *c, unsigned long long *len,
+                 const unsigned char *m, unsigned long long mlen,
+                 const unsigned char *ad, unsigned long long adlen,
+                 const unsigned char *npub,
+                 const unsigned char *k)
+{
+    errno = ENOSYS;
+    return -1;
+}
+
+int
+aegis256_decrypt(unsigned char *m, unsigned long long *len,
+                 const unsigned char *c, unsigned long long clen,
+                 const unsigned char *ad, unsigned long long adlen,
+                 const unsigned char *npub,
+                 const unsigned char *k)
+{
+    errno = ENOSYS;
+    return -1;
+}
+
+#endif
