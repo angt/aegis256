@@ -1,5 +1,7 @@
 #pragma once
 
+#define AEGIS256_NPUBBYTES 32
+
 int
 aegis256_is_available(void);
 
