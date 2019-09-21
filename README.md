@@ -1,3 +1,3 @@
 # AEGIS-256
 
-** WIP! DO NOT USE IT! **
+AEGIS-256 will be available on [libsodium](https://github.com/jedisct1/libsodium) soon, wait for it :)@
