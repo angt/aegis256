@@ -3,6 +3,10 @@
 #include "errno.h"
 #include "aegis256.h"
 
+#ifndef __has_include
+#define __has_include(X) 0
+#endif
+
 #if __has_include("x86intrin.h")
 
 #include <string.h>
