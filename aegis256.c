@@ -7,7 +7,7 @@
 #define __has_include(X) 0
 #endif
 
-#if __has_include("x86intrin.h")
+#if (__has_include("x86intrin.h") && __has_include("cpuid.h"))
 
 #include <string.h>
 #include <x86intrin.h>
