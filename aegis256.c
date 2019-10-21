@@ -55,14 +55,7 @@ typedef uint8x16_t    x128;
 #define and128(X,Y)   vandq_u8((X), (Y))
 #define load128(X)    vld1q_u8((const uint8_t *)(X))
 #define store128(X,Y) vst1q_u8((uint8_t *)(X), (Y))
-
-static inline x128
-set2x64(uint64_t x1, uint64_t x2)
-{
-    uint64_t __attribute__((aligned(16)))
-    data[] = {x2, x1};
-    return vreinterpretq_u8_u64(vld1q_u64(data));
-}
+#define set2x64(X,Y)  vreinterpretq_u8_u64(vsetq_lane_u64((X), vmovq_n_u64((Y)), 1))
 
 int
 aegis256_is_available(void)
