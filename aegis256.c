@@ -57,10 +57,10 @@ typedef uint8x16_t    x128;
 #define store128(X,Y) vst1q_u8((uint8_t *)(X), (Y))
 
 static inline x128
-set2x64(uint64_t x2, uint64_t x1)
+set2x64(uint64_t x1, uint64_t x2)
 {
     uint64_t __attribute__((aligned(16)))
-    data[] = {x1, x2};
+    data[] = {x2, x1};
     return vreinterpretq_u8_u64(vld1q_u64(data));
 }
 
@@ -80,8 +80,7 @@ aegis256_is_available(void)
 #ifdef aesenc
 
 static inline void
-aegis256_update(x128 *const restrict state,
-                const x128 data)
+aegis256_update(x128 *const restrict state, x128 data)
 {
     x128 tmp = aesenc(state[5], state[0]);
     state[5] = aesenc(state[4], state[5]);
