@@ -35,7 +35,6 @@ typedef __m128i       x128;
 #define load128(X)    _mm_loadu_si128((const x128 *)(X))
 #define store128(X,Y) _mm_storeu_si128((x128 *)(X), (Y))
 #define set2x64(X,Y)  _mm_set_epi64x((X), (Y))
-#define set16x8(...)  _mm_set_epi8(__VA_ARGS__)
 
 #elif defined(__linux__) && (defined(__ARM_NEON_FP) || defined(__aarch64__))
 
@@ -63,17 +62,6 @@ set2x64(uint64_t x2, uint64_t x1)
     uint64_t __attribute__((aligned(16)))
     data[] = {x1, x2};
     return vreinterpretq_u8_u64(vld1q_u64(data));
-}
-
-static inline x128
-set16x8(uint8_t xf, uint8_t xe, uint8_t xd, uint8_t xc,
-        uint8_t xb, uint8_t xa, uint8_t x9, uint8_t x8,
-        uint8_t x7, uint8_t x6, uint8_t x5, uint8_t x4,
-        uint8_t x3, uint8_t x2, uint8_t x1, uint8_t x0)
-{
-    uint8_t __attribute__((aligned(16)))
-    data[] = {x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, xa, xb, xc, xd, xe, xf};
-    return vld1q_u8(data);
 }
 
 int
@@ -139,6 +127,14 @@ aegis256_init(const unsigned char *const key,
               const unsigned char *const iv,
               x128 *const restrict state)
 {
+    __attribute__((aligned(16)))
+    static const unsigned char c[] = {
+        0xdb, 0x3d, 0x18, 0x55, 0x6d, 0xc2, 0x2f, 0xf1,
+        0x20, 0x11, 0x31, 0x42, 0x73, 0xb5, 0x28, 0xdd,
+        0x00, 0x01, 0x01, 0x02, 0x03, 0x05, 0x08, 0x0d,
+        0x15, 0x22, 0x37, 0x59, 0x90, 0xe9, 0x79, 0x62,
+    };
+
     x128 k1 = load128(&key[0]);
     x128 k2 = load128(&key[16]);
     x128 k3 = xor128(k1, load128(&iv[0]));
@@ -146,10 +142,8 @@ aegis256_init(const unsigned char *const key,
 
     state[0] = k3;
     state[1] = k4;
-    state[2] = set16x8(0xdd, 0x28, 0xb5, 0x73, 0x42, 0x31, 0x11, 0x20,
-                       0xf1, 0x2f, 0xc2, 0x6d, 0x55, 0x18, 0x3d, 0xdb);
-    state[3] = set16x8(0x62, 0x79, 0xe9, 0x90, 0x59, 0x37, 0x22, 0x15,
-                       0x0d, 0x08, 0x05, 0x03, 0x02, 0x01, 0x01, 0x00);
+    state[2] = load128(&c[0]);
+    state[3] = load128(&c[16]);
     state[4] = xor128(k1, state[3]);
     state[5] = xor128(k2, state[2]);
 
