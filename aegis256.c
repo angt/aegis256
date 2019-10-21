@@ -39,8 +39,10 @@ typedef __m128i       x128;
 #elif defined(__linux__) && (defined(__ARM_NEON_FP) || defined(__aarch64__))
 
 #ifdef __clang__
-// XXX: not tested...
-#pragma clang attribute push (__attribute__((target("+crypto"))),apply_to=function)
+#pragma clang attribute push (__attribute__((target("crypto"))),apply_to=function)
+#ifndef __ARM_FEATURE_CRYPTO
+#define __ARM_FEATURE_CRYPTO 1
+#endif
 #else
 #pragma GCC target("+crypto")
 #endif
