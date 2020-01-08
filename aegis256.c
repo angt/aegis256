@@ -34,7 +34,7 @@ typedef __m128i       x128;
 #define and128(X,Y)   _mm_and_si128((X), (Y))
 #define load128(X)    _mm_loadu_si128((const x128 *)(X))
 #define store128(X,Y) _mm_storeu_si128((x128 *)(X), (Y))
-#define set2x64(X,Y)  _mm_set_epi64x((X), (Y))
+#define set2x64(X,Y)  _mm_set_epi64x((long long)(X), (long long)(Y))
 
 #elif defined(__linux__) && (defined(__ARM_NEON_FP) || defined(__aarch64__))
 
