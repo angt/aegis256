@@ -75,7 +75,7 @@ aegis256_is_available(void)
 #ifdef aesenc
 
 static inline void
-aegis256_update(x128 *const restrict state, x128 data)
+aegis256_update(x128 *const state, x128 data)
 {
     x128 tmp = aesenc(state[5], state[0]);
     state[5] = aesenc(state[4], state[5]);
@@ -87,9 +87,9 @@ aegis256_update(x128 *const restrict state, x128 data)
 }
 
 static inline void
-aegis256_enc(unsigned char *const restrict dst,
-             const unsigned char *const restrict src,
-             x128 *const restrict state)
+aegis256_enc(unsigned char *const dst,
+             const unsigned char *const src,
+             x128 *const state)
 {
     x128 tmp, msg = load128(src);
     tmp = xor128(msg, state[5]);
@@ -102,9 +102,9 @@ aegis256_enc(unsigned char *const restrict dst,
 }
 
 static inline void
-aegis256_dec(unsigned char *const restrict dst,
-             const unsigned char *const restrict src,
-             x128 *const restrict state)
+aegis256_dec(unsigned char *const dst,
+             const unsigned char *const src,
+             x128 *const state)
 {
     x128 tmp = load128(src);
     tmp = xor128(tmp, state[5]);
@@ -119,7 +119,7 @@ aegis256_dec(unsigned char *const restrict dst,
 static void
 aegis256_init(const unsigned char *const key,
               const unsigned char *const iv,
-              x128 *const restrict state)
+              x128 *const state)
 {
     __attribute__((aligned(16)))
     static const unsigned char c[] = {
@@ -150,10 +150,10 @@ aegis256_init(const unsigned char *const key,
 }
 
 static void
-aegis256_tag(unsigned char *const restrict mac,
+aegis256_tag(unsigned char *const mac,
              const unsigned long long mlen,
              const unsigned long long adlen,
-             x128 *const restrict state)
+             x128 *const state)
 {
     x128 tmp = set2x64(mlen << 3, adlen << 3);
     tmp = xor128(tmp, state[3]);
