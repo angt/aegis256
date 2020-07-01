@@ -36,7 +36,7 @@ typedef __m128i       x128;
 #define store128(X,Y) _mm_storeu_si128((x128 *)(X), (Y))
 #define set2x64(X,Y)  _mm_set_epi64x((long long)(X), (long long)(Y))
 
-#elif defined(__linux__) && (defined(__ARM_NEON_FP) || defined(__aarch64__))
+#elif (defined(__APPLE__) || defined(__linux__)) && (defined(__ARM_NEON_FP) || defined(__aarch64__))
 
 #ifdef __clang__
 #pragma clang attribute push (__attribute__((target("crypto"))),apply_to=function)
@@ -48,7 +48,9 @@ typedef __m128i       x128;
 #endif
 
 #ifdef __ARM_FEATURE_CRYPTO
+#ifdef __linux__
 #include <sys/auxv.h>
+#endif
 #include <arm_neon.h>
 
 typedef uint8x16_t    x128;
@@ -62,11 +64,15 @@ typedef uint8x16_t    x128;
 int
 aegis256_is_available(void)
 {
+#ifdef __linux__
     return (getauxval(AT_HWCAP) & HWCAP_AES)
 #ifdef HWCAP2_AES
         || (getauxval(AT_HWCAP2) & HWCAP2_AES)
 #endif
         ;
+#else // __APPLE__
+    return 1;
+#endif
 }
 
 #endif // __ARM_FEATURE_CRYPTO
