@@ -48,7 +48,7 @@ typedef __m128i       x128;
 #endif
 
 #ifdef __ARM_FEATURE_CRYPTO
-#ifdef __linux__
+#if defined(__linux__) && __has_include("sys/auxv.h")
 #include <sys/auxv.h>
 #endif
 #include <arm_neon.h>
@@ -64,7 +64,7 @@ typedef uint8x16_t    x128;
 int
 aegis256_is_available(void)
 {
-#ifdef __linux__
+#if defined(__linux__) && __has_include("sys/auxv.h")
     return (getauxval(AT_HWCAP) & HWCAP_AES)
 #ifdef HWCAP2_AES
         || (getauxval(AT_HWCAP2) & HWCAP2_AES)
