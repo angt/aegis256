@@ -1,9 +1,9 @@
-CFLAGS=-march=native -O2
+CFLAGS = -march=native -Wall -O2 -g -fsanitize=address,undefined
 
-.PHONY: all
-all: test
+all: clean test
 	./test
 
-.PHONY: clean
 clean:
 	rm -f test
+
+.PHONY: clean all
