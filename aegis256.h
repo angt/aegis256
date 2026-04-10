@@ -21,4 +21,4 @@ aegis256_decrypt(unsigned char *,
            const unsigned char *, size_t,
            const unsigned char *,
            const unsigned char *,
-           const unsigned char *);
+           const unsigned char *, size_t);

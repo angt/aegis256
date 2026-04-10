@@ -175,11 +175,11 @@ aegis256_encrypt(unsigned char *c,
 
 int
 aegis256_decrypt(unsigned char *m,
-           const unsigned char *c,  size_t clen,
-           const unsigned char *ad, size_t adlen,
+           const unsigned char *c,   size_t clen,
+           const unsigned char *ad,  size_t adlen,
            const unsigned char *npub,
            const unsigned char *k,
-           const unsigned char *tag)
+           const unsigned char *tag, size_t taglen)
 {
     x128 state[6];
     unsigned char src[16];
@@ -213,7 +213,10 @@ aegis256_decrypt(unsigned char *m,
     }
     aegis256_tag(tmp, clen, adlen, state);
 
-    for (i = 0; i < 16; i++)
+    if (taglen > 16)
+        taglen = 16;
+
+    for (i = 0; i < taglen; i++)
         ret |= (tmp[i] ^ tag[i]);
 
     return 1 - (1 & ((ret - 1) >> 8));
@@ -253,7 +256,7 @@ aegis256_is_available(void)
         unsigned char key[32] = {42};
         unsigned char tag[16];
         aegis256_encrypt(c, m, sizeof(m), NULL, 0, npub, key, tag);
-        available = !aegis256_decrypt(m, c, sizeof(c), NULL, 0, npub, key, tag);
+        available = !aegis256_decrypt(m, c, sizeof(c), NULL, 0, npub, key, tag, 16);
     }
     sigaction(SIGILL, &sa_old, 0);
 
@@ -282,11 +285,11 @@ aegis256_encrypt(unsigned char *c,
 
 int
 aegis256_decrypt(unsigned char *m,
-           const unsigned char *c,  size_t clen,
-           const unsigned char *ad, size_t adlen,
+           const unsigned char *c,   size_t clen,
+           const unsigned char *ad,  size_t adlen,
            const unsigned char *npub,
            const unsigned char *k,
-           const unsigned char *tag)
+           const unsigned char *tag, size_t taglen)
 {
     errno = ENOSYS;
     return -1;

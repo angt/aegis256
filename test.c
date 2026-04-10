@@ -700,7 +700,7 @@ main(int argc, char **argv)
                                     t[i].ad, t[i].adlen,
                                     t[i].npub,
                                     t[i].key,
-                                    t[i].c + t[i].mlen);
+                                    t[i].c + t[i].mlen, 16);
 
         if (r || memcmp(t[i].m, m, t[i].mlen)) {
             printf("%3i: FAILED\n", i);
